@@ -105,12 +105,16 @@ function Contacts() {
             </div>
           </div>
         </a>
-        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden h-64 flex items-center justify-center">
-          <div className="text-center text-gray-500">
-            <Icon name="MapPin" size={40} className="mx-auto mb-3 text-[#ff6600]" />
-            <p className="text-lg font-medium text-gray-400">Карта и адрес</p>
-            <p className="text-sm">Добавьте ваш адрес, и мы встроим Яндекс.Карту</p>
-          </div>
+        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden h-80">
+          <iframe
+            src="https://yandex.ru/map-widget/v1/?ll=37.652829%2C55.806606&z=16&pt=37.652829%2C55.806606%2Cpm2rdm"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            allowFullScreen
+            title="Карта АвтоМеханики"
+            style={{ border: 0 }}
+          />
         </div>
       </div>
     </section>
