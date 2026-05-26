@@ -125,6 +125,37 @@ function Contacts() {
   );
 }
 
+const partners = [
+  { name: "Партнёр 1", description: "Описание партнёра", logo: null },
+  { name: "Партнёр 2", description: "Описание партнёра", logo: null },
+  { name: "Партнёр 3", description: "Описание партнёра", logo: null },
+];
+
+function Partners() {
+  return (
+    <section id="partners" className="py-20 bg-[#f4f6fa]">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-14">
+          <div className="section-divider mx-auto mb-4" />
+          <h2 className="font-montserrat font-black text-[#1a1f2e] text-3xl md:text-4xl mb-3">Наши партнёры</h2>
+          <p className="text-gray-500 text-lg">Работаем только с проверенными поставщиками и сервисами</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {partners.map((partner) => (
+            <div key={partner.name} className="bg-white rounded-xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-lg transition-shadow duration-300">
+              <div className="w-16 h-16 bg-[#f4f6fa] rounded-full flex items-center justify-center mb-4">
+                <Icon name="Building2" size={28} className="text-[#0055b3]" />
+              </div>
+              <h3 className="font-montserrat font-bold text-[#1a1f2e] text-lg mb-2">{partner.name}</h3>
+              <p className="text-gray-500 text-sm">{partner.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="bg-[#0a1122] py-8 border-t border-white/5">
@@ -149,6 +180,7 @@ export default function FaqContactsFooter() {
     <>
       <FAQ />
       <Contacts />
+      <Partners />
       <Footer />
     </>
   );
