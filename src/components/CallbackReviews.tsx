@@ -1,4 +1,6 @@
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import func2url from "@/../backend/func2url.json";
 
 const PHONE = "+7 (977) 977-57-63";
 const EMAIL = "info@avtomexaniki.ru";
@@ -20,6 +22,34 @@ function StarRating({ count }: { count: number }) {
 }
 
 function CallbackSection() {
+  const [form, setForm] = useState({ name: '', phone: '', car: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.phone.trim()) return;
+    setStatus('loading');
+    try {
+      const res = await fetch(func2url['send-lead'], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setStatus('success');
+        setForm({ name: '', phone: '', car: '', message: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+
   return (
     <section id="callback" className="py-20 bg-[#f4f6fa]">
       <div className="max-w-5xl mx-auto px-4">
@@ -44,47 +74,76 @@ function CallbackSection() {
               </div>
             </div>
             <div className="p-10">
-              <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Ваше имя</label>
-                  <input
-                    type="text"
-                    placeholder="Иван Иванов"
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors"
-                  />
+              {status === 'success' ? (
+                <div className="h-full flex flex-col items-center justify-center text-center py-8">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <Icon name="CheckCircle" size={32} className="text-green-500" />
+                  </div>
+                  <h3 className="font-montserrat font-bold text-xl text-[#1a1f2e] mb-2">Заявка отправлена!</h3>
+                  <p className="text-gray-500 text-sm mb-6">Мастер перезвонит вам в течение 15 минут.</p>
+                  <button onClick={() => setStatus('idle')} className="text-[#0055b3] text-sm font-medium hover:underline">Отправить ещё</button>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Телефон</label>
-                  <input
-                    type="tel"
-                    placeholder="+7 (___) ___-__-__"
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Марка и модель авто</label>
-                  <input
-                    type="text"
-                    placeholder="Toyota Camry 2018"
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Описание проблемы</label>
-                  <textarea
-                    placeholder="Опишите неисправность или нужную услугу..."
-                    rows={3}
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-[#ff6600] hover:bg-[#e55a00] text-white font-montserrat font-bold py-4 rounded-lg text-base transition-all duration-200 hover:shadow-lg hover:shadow-[#ff6600]/30"
-                >
-                  Отправить заявку
-                </button>
-                <p className="text-xs text-gray-400 text-center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
-              </form>
+              ) : (
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Ваше имя *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Иван Иванов"
+                      required
+                      className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Телефон *</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="+7 (___) ___-__-__"
+                      required
+                      className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Марка и модель авто</label>
+                    <input
+                      type="text"
+                      name="car"
+                      value={form.car}
+                      onChange={handleChange}
+                      placeholder="Toyota Camry 2018"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Описание проблемы</label>
+                    <textarea
+                      name="message"
+                      value={form.message}
+                      onChange={handleChange}
+                      placeholder="Опишите неисправность или нужную услугу..."
+                      rows={3}
+                      className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055b3]/30 focus:border-[#0055b3] transition-colors resize-none"
+                    />
+                  </div>
+                  {status === 'error' && (
+                    <p className="text-red-500 text-sm">Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="w-full bg-[#ff6600] hover:bg-[#e55a00] disabled:opacity-60 text-white font-montserrat font-bold py-4 rounded-lg text-base transition-all duration-200 hover:shadow-lg hover:shadow-[#ff6600]/30"
+                  >
+                    {status === 'loading' ? 'Отправляем...' : 'Отправить заявку'}
+                  </button>
+                  <p className="text-xs text-gray-400 text-center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
+                </form>
+              )}
             </div>
           </div>
         </div>
