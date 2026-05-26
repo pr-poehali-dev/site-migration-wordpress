@@ -90,7 +90,7 @@ function Hero() {
           <h1 className="font-montserrat font-black text-white text-4xl md:text-5xl lg:text-6xl leading-tight mb-5 animate-fade-up delay-100">
             Профессиональный<br />
             <span className="text-[#ff6600]">автосервис</span><br />
-            у вас дома
+            на дороге или у вас дома
           </h1>
 
           <p className="text-gray-300 text-lg mb-8 leading-relaxed animate-fade-up delay-200">
