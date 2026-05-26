@@ -126,9 +126,10 @@ function Contacts() {
 }
 
 const partners = [
-  { name: "Партнёр 1", description: "Описание партнёра", logo: null },
-  { name: "Партнёр 2", description: "Описание партнёра", logo: null },
-  { name: "Партнёр 3", description: "Описание партнёра", logo: null },
+  { name: "Emex.ru", description: "Подбор и заказ автозапчастей с доставкой по всей России", url: "https://emex.ru" },
+  { name: "Exist.ru", description: "Крупнейший онлайн-магазин оригинальных и аналоговых запчастей", url: "https://exist.ru" },
+  { name: "Яндекс Маркет", description: "Покупка автотоваров и запчастей с быстрой доставкой", url: "https://market.yandex.ru" },
+  { name: "БалтСервис", description: "Надёжный партнёр по техническому обслуживанию и ремонту", url: "#" },
 ];
 
 function Partners() {
@@ -140,15 +141,21 @@ function Partners() {
           <h2 className="font-montserrat font-black text-[#1a1f2e] text-3xl md:text-4xl mb-3">Наши партнёры</h2>
           <p className="text-gray-500 text-lg">Работаем только с проверенными поставщиками и сервисами</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {partners.map((partner) => (
-            <div key={partner.name} className="bg-white rounded-xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-lg transition-shadow duration-300">
+            <a
+              key={partner.name}
+              href={partner.url}
+              target={partner.url !== "#" ? "_blank" : undefined}
+              rel="noopener noreferrer"
+              className="bg-white rounded-xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-lg transition-shadow duration-300 no-underline"
+            >
               <div className="w-16 h-16 bg-[#f4f6fa] rounded-full flex items-center justify-center mb-4">
                 <Icon name="Building2" size={28} className="text-[#0055b3]" />
               </div>
               <h3 className="font-montserrat font-bold text-[#1a1f2e] text-lg mb-2">{partner.name}</h3>
               <p className="text-gray-500 text-sm">{partner.description}</p>
-            </div>
+            </a>
           ))}
         </div>
       </div>
