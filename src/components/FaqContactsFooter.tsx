@@ -116,6 +116,10 @@ function Contacts() {
             style={{ border: 0 }}
           />
         </div>
+        <div className="flex items-center gap-3 mt-4 text-gray-400 text-sm">
+          <Icon name="MapPin" size={16} className="text-[#ff6600] flex-shrink-0" />
+          <span>Алексеевский район, Северо-Восточный административный округ, Москва</span>
+        </div>
       </div>
     </section>
   );
