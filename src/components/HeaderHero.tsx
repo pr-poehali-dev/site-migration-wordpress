@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-const PHONE = "+7 (999) 123-45-67";
+const PHONE = "+7 (977) 977-57-63";
 const EMAIL = "info@avtomexaniki.ru";
 
 function Header() {
