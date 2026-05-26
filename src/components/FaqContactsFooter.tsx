@@ -126,10 +126,10 @@ function Contacts() {
 }
 
 const partners = [
-  { name: "Emex.ru", description: "Подбор и заказ автозапчастей с доставкой по всей России", url: "https://emex.ru", logo: "https://cdn.poehali.dev/projects/693a2df7-d4ac-4b17-8f97-90b7af1c414c/files/93a013d4-c271-4b47-a14d-0cca189f937d.jpg" },
-  { name: "Exist.ru", description: "Крупнейший онлайн-магазин оригинальных и аналоговых запчастей", url: "https://exist.ru", logo: "https://cdn.poehali.dev/projects/693a2df7-d4ac-4b17-8f97-90b7af1c414c/files/28cfd764-13d8-4bba-a2bc-400c3fc7cad5.jpg" },
-  { name: "Яндекс Маркет", description: "Покупка автотоваров и запчастей с быстрой доставкой", url: "https://market.yandex.ru", logo: "https://cdn.poehali.dev/projects/693a2df7-d4ac-4b17-8f97-90b7af1c414c/files/afed4ad0-ae1d-4c5c-9786-c1f8e2031ad8.jpg" },
-  { name: "БалтСервис", description: "Надёжный партнёр по техническому обслуживанию и ремонту", url: "#", logo: "https://cdn.poehali.dev/projects/693a2df7-d4ac-4b17-8f97-90b7af1c414c/files/8adf7411-79c0-4878-9fcf-fd54565e666c.jpg" },
+  { name: "Emex.ru", description: "Подбор и заказ автозапчастей с доставкой по всей России", url: "https://emex.ru", logo: "https://www.google.com/s2/favicons?sz=128&domain=emex.ru" },
+  { name: "Exist.ru", description: "Крупнейший онлайн-магазин оригинальных и аналоговых запчастей", url: "https://exist.ru", logo: "https://www.google.com/s2/favicons?sz=128&domain=exist.ru" },
+  { name: "Яндекс Маркет", description: "Покупка автотоваров и запчастей с быстрой доставкой", url: "https://market.yandex.ru", logo: "https://www.google.com/s2/favicons?sz=128&domain=market.yandex.ru" },
+  { name: "БалтСервис", description: "Надёжный партнёр по техническому обслуживанию и ремонту", url: "#", logo: "https://www.google.com/s2/favicons?sz=128&domain=baltservice.pro" },
 ];
 
 function Partners() {
@@ -150,8 +150,8 @@ function Partners() {
               rel="noopener noreferrer"
               className="bg-white rounded-xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-lg transition-shadow duration-300 no-underline"
             >
-              <div className="w-20 h-20 rounded-xl overflow-hidden mb-4 border border-gray-100 flex items-center justify-center bg-white">
-                <img src={partner.logo} alt={partner.name} className="w-full h-full object-contain p-1" />
+              <div className="w-16 h-16 rounded-xl overflow-hidden mb-4 border border-gray-100 flex items-center justify-center bg-white shadow-sm">
+                <img src={partner.logo} alt={partner.name} className="w-12 h-12 object-contain" />
               </div>
               <h3 className="font-montserrat font-bold text-[#1a1f2e] text-lg mb-2">{partner.name}</h3>
               <p className="text-gray-500 text-sm">{partner.description}</p>
