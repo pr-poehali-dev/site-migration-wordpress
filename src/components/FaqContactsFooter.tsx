@@ -53,7 +53,7 @@ function Contacts() {
           <h2 className="font-montserrat font-black text-white text-3xl md:text-4xl mb-3">Контакты</h2>
           <p className="text-gray-400 text-lg">Свяжитесь с нами удобным способом</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {[
             { icon: "Phone", title: "Телефон", val: PHONE, sub: "Звонки и WhatsApp", href: `tel:${PHONE}` },
             { icon: "Mail", title: "Email", val: EMAIL, sub: "Отвечаем в течение часа", href: `mailto:${EMAIL}` },
@@ -73,6 +73,38 @@ function Contacts() {
             </div>
           ))}
         </div>
+
+        <a
+          href="https://max.ru/join/hfjBb2d29SObftaCFmZNeNfNQdtYWbQM-S1LUS3Y8_w"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block mb-12 bg-white/5 border border-white/10 rounded-xl p-7 hover:bg-white/10 transition-colors"
+        >
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-shrink-0 bg-white rounded-2xl p-3">
+              <img
+                src="https://cdn.poehali.dev/projects/693a2df7-d4ac-4b17-8f97-90b7af1c414c/files/6ce8f91b-9eb4-47b3-9a79-09b3359e9ed9.jpg"
+                alt="QR-код для входа в чат MAX"
+                className="w-40 h-40 object-cover rounded-xl"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-[#ff6600]/15 rounded-xl flex items-center justify-center">
+                  <Icon name="MessageCircle" size={22} className="text-[#ff6600]" />
+                </div>
+                <span className="font-montserrat font-bold text-white text-xl">Чат в MAX</span>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                Отсканируйте QR-код камерой телефона, чтобы сразу написать нам в MAX — отвечаем быстро!
+              </p>
+              <span className="inline-flex items-center gap-2 bg-[#ff6600] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#e55a00] transition-colors">
+                <Icon name="ExternalLink" size={16} />
+                Открыть чат
+              </span>
+            </div>
+          </div>
+        </a>
         <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden h-64 flex items-center justify-center">
           <div className="text-center text-gray-500">
             <Icon name="MapPin" size={40} className="mx-auto mb-3 text-[#ff6600]" />
