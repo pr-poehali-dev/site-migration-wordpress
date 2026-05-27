@@ -197,4 +197,63 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps({'ok': True})}
 
+    # --- NEWS ---
+    if method == 'GET' and '/public/news' in path:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT id, title, content, image_url, created_at FROM news WHERE is_active = true ORDER BY sort_order, created_at DESC LIMIT 4")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        news = [{'id': r[0], 'title': r[1], 'content': r[2], 'image_url': r[3], 'created_at': str(r[4])} for r in rows]
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps(news, ensure_ascii=False)}
+
+    if method == 'GET' and path.endswith('/news'):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT id, title, content, image_url, sort_order, is_active, created_at FROM news ORDER BY sort_order, created_at DESC")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        news = [{'id': r[0], 'title': r[1], 'content': r[2], 'image_url': r[3], 'sort_order': r[4], 'is_active': r[5], 'created_at': str(r[6])} for r in rows]
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps(news, ensure_ascii=False)}
+
+    if method == 'POST' and path.endswith('/news'):
+        body = json.loads(event.get('body') or '{}')
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO news (title, content, image_url, sort_order, is_active) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+            (body['title'], body.get('content', ''), body.get('image_url', ''), body.get('sort_order', 99), body.get('is_active', True))
+        )
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps({'id': new_id})}
+
+    if method == 'PUT' and '/news/' in path:
+        news_id = path.split('/')[-1]
+        body = json.loads(event.get('body') or '{}')
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE news SET title=%s, content=%s, image_url=%s, sort_order=%s, is_active=%s, updated_at=NOW() WHERE id=%s",
+            (body.get('title'), body.get('content'), body.get('image_url'), body.get('sort_order'), body.get('is_active'), news_id)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps({'ok': True})}
+
+    if method == 'DELETE' and '/news/' in path:
+        news_id = path.split('/')[-1]
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM news WHERE id = %s", (news_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps({'ok': True})}
+
     return {'statusCode': 404, 'headers': CORS_HEADERS, 'body': json.dumps({'error': 'Not found'})}

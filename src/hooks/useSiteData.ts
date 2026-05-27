@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const CONTENT_URL = "https://functions.poehali.dev/b305aa3e-2bad-4942-8d73-ddc275d86aa8";
+export const CONTENT_URL = "https://functions.poehali.dev/b305aa3e-2bad-4942-8d73-ddc275d86aa8";
 
 export interface Service {
   id: number;
@@ -15,6 +15,16 @@ export interface FaqItem {
   id: number;
   question: string;
   answer: string;
+}
+
+export interface NewsItem {
+  id: number;
+  title: string;
+  content: string;
+  image_url: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
 }
 
 export interface SiteSettings {
@@ -36,9 +46,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
   work_hours: "Круглосуточно, 24/7",
 };
 
-let cache: { services: Service[]; faq: FaqItem[]; settings: SiteSettings } | null = null;
+let cache: { services: Service[]; faq: FaqItem[]; settings: SiteSettings; news: NewsItem[] } | null = null;
 
-function parseResponse(data: unknown): unknown {
+export function parseResponse(data: unknown): unknown {
   if (typeof data === "string") {
     try { return JSON.parse(data); } catch { return data; }
   }
@@ -49,6 +59,7 @@ export function useSiteData() {
   const [services, setServices] = useState<Service[]>([]);
   const [faq, setFaq] = useState<FaqItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -56,6 +67,7 @@ export function useSiteData() {
       setServices(cache.services);
       setFaq(cache.faq);
       setSettings(cache.settings);
+      setNews(cache.news);
       setLoading(false);
       return;
     }
@@ -63,18 +75,21 @@ export function useSiteData() {
       fetch(CONTENT_URL + "/public/services").then(r => r.json()).then(parseResponse).catch(() => []),
       fetch(CONTENT_URL + "/public/faq").then(r => r.json()).then(parseResponse).catch(() => []),
       fetch(CONTENT_URL + "/public/settings").then(r => r.json()).then(parseResponse).catch(() => ({})),
-    ]).then(([s, f, st]) => {
+      fetch(CONTENT_URL + "/public/news").then(r => r.json()).then(parseResponse).catch(() => []),
+    ]).then(([s, f, st, n]) => {
       const safeServices = Array.isArray(s) ? s : [];
       const safeFaq = Array.isArray(f) ? f : [];
+      const safeNews = Array.isArray(n) ? n : [];
       const safeSettings = (st && typeof st === "object" && !Array.isArray(st)) ? st : {};
       const mergedSettings = { ...DEFAULT_SETTINGS, ...safeSettings };
-      cache = { services: safeServices, faq: safeFaq, settings: mergedSettings };
+      cache = { services: safeServices, faq: safeFaq, settings: mergedSettings, news: safeNews };
       setServices(safeServices);
       setFaq(safeFaq);
       setSettings(mergedSettings);
+      setNews(safeNews);
       setLoading(false);
     });
   }, []);
 
-  return { services, faq, settings, loading };
+  return { services, faq, settings, news, loading };
 }

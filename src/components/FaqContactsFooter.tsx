@@ -171,16 +171,37 @@ function Partners() {
 function Footer() {
   const { settings } = useSiteData();
   return (
-    <footer className="bg-[#0a1122] py-8 border-t border-white/5">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-gray-500 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-[#0055b3] rounded flex items-center justify-center">
-            <Icon name="Car" size={14} className="text-white" />
+    <footer className="bg-[#0a1122] py-10 border-t border-white/5">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 bg-[#0055b3] rounded flex items-center justify-center">
+                <Icon name="Car" size={14} className="text-white" />
+              </div>
+              <span className="font-montserrat font-bold text-white">АвтоМеханики</span>
+            </div>
+            <p className="text-gray-500 text-sm leading-relaxed">Профессиональный автосервис в Москве. Работаем {settings.work_hours}.</p>
           </div>
-          <span className="font-montserrat font-bold text-white">АвтоМеханики</span>
+          <div>
+            <div className="font-semibold text-white text-sm mb-3">Разделы</div>
+            <div className="flex flex-col gap-2">
+              {[["#services","Услуги"],["#why-us","О нас"],["#reviews","Отзывы"],["#news","Новости"],["#faq","FAQ"],["#contacts","Контакты"]].map(([href, label]) => (
+                <a key={href} href={href} className="text-gray-500 hover:text-white text-sm transition-colors">{label}</a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="font-semibold text-white text-sm mb-3">Контакты</div>
+            <div className="flex flex-col gap-2 text-sm text-gray-500">
+              <a href={`tel:${settings.phone}`} className="hover:text-white transition-colors">{settings.phone}</a>
+              <a href={`mailto:${settings.email}`} className="hover:text-white transition-colors">{settings.email}</a>
+              <span>{settings.address}</span>
+            </div>
+          </div>
         </div>
-        <div>© 2024 {settings.email} — Все права защищены</div>
-        <div className="flex gap-4">
+        <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-gray-600 text-sm">
+          <div>© 2024 АвтоМеханики — Все права защищены</div>
           <a href="#" className="hover:text-white transition-colors">Политика конфиденциальности</a>
         </div>
       </div>

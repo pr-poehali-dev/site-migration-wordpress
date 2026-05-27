@@ -32,6 +32,7 @@ function Header() {
             <a href="#services" className="text-gray-600 hover:text-[#0055b3] transition-colors">Услуги</a>
             <a href="#why-us" className="text-gray-600 hover:text-[#0055b3] transition-colors">О нас</a>
             <a href="#reviews" className="text-gray-600 hover:text-[#0055b3] transition-colors">Отзывы</a>
+            <a href="#news" className="text-[#0055b3] font-semibold hover:text-[#ff6600] transition-colors">Новости</a>
             <a href="#faq" className="text-gray-600 hover:text-[#0055b3] transition-colors">FAQ</a>
             <a href="#contacts" className="text-gray-600 hover:text-[#0055b3] transition-colors">Контакты</a>
             <a href="#partners" className="text-gray-600 hover:text-[#0055b3] transition-colors">Партнёры</a>
@@ -54,8 +55,8 @@ function Header() {
         {menuOpen && (
           <div className="md:hidden pb-4 border-t border-gray-100 animate-fade-in">
             <nav className="flex flex-col gap-3 pt-4">
-              {["#services", "#why-us", "#reviews", "#faq", "#contacts", "#partners"].map((href, i) => {
-                const labels = ["Услуги", "О нас", "Отзывы", "FAQ", "Контакты", "Партнёры"];
+              {["#services", "#why-us", "#reviews", "#news", "#faq", "#contacts", "#partners"].map((href, i) => {
+                const labels = ["Услуги", "О нас", "Отзывы", "Новости", "FAQ", "Контакты", "Партнёры"];
                 return (
                   <a key={href} href={href} className="text-gray-700 font-medium py-1 hover:text-[#0055b3] transition-colors" onClick={() => setMenuOpen(false)}>
                     {labels[i]}
