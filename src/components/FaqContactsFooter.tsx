@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { useSiteData } from "@/hooks/useSiteData";
 
@@ -186,9 +187,10 @@ function Footer() {
           <div>
             <div className="font-semibold text-white text-sm mb-3">Разделы</div>
             <div className="flex flex-col gap-2">
-              {[["#services","Услуги"],["#why-us","О нас"],["#reviews","Отзывы"],["#news","Новости"],["#faq","FAQ"],["#contacts","Контакты"]].map(([href, label]) => (
+              {[["#services","Услуги"],["#why-us","О нас"],["#reviews","Отзывы"],["#faq","FAQ"],["#contacts","Контакты"]].map(([href, label]) => (
                 <a key={href} href={href} className="text-gray-500 hover:text-white text-sm transition-colors">{label}</a>
               ))}
+              <Link to="/news" className="text-gray-500 hover:text-white text-sm transition-colors">Новости</Link>
             </div>
           </div>
           <div>

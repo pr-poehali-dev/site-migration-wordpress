@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { useSiteData, type NewsItem } from "@/hooks/useSiteData";
 
@@ -102,6 +103,15 @@ export default function NewsSection() {
               })}
             </div>
           )}
+
+          <div className="text-center mt-10">
+            <Link
+              to="/news"
+              className="inline-flex items-center gap-2 bg-[#0055b3] hover:bg-[#004499] text-white font-montserrat font-semibold px-8 py-3 rounded-xl transition-colors"
+            >
+              Все новости <Icon name="ArrowRight" size={18} />
+            </Link>
+          </div>
         </div>
       </section>
 

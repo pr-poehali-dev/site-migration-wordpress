@@ -198,6 +198,16 @@ def handler(event: dict, context) -> dict:
         return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps({'ok': True})}
 
     # --- NEWS ---
+    if method == 'GET' and '/public/news/all' in path:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT id, title, content, image_url, created_at FROM news WHERE is_active = true ORDER BY sort_order, created_at DESC")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        news = [{'id': r[0], 'title': r[1], 'content': r[2], 'image_url': r[3], 'created_at': str(r[4])} for r in rows]
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps(news, ensure_ascii=False)}
+
     if method == 'GET' and '/public/news' in path:
         conn = get_db()
         cur = conn.cursor()
