@@ -72,10 +72,10 @@ export function useSiteData() {
       return;
     }
     Promise.all([
-      fetch(CONTENT_URL + "/public/services").then(r => r.json()).then(parseResponse).catch(() => []),
-      fetch(CONTENT_URL + "/public/faq").then(r => r.json()).then(parseResponse).catch(() => []),
-      fetch(CONTENT_URL + "/public/settings").then(r => r.json()).then(parseResponse).catch(() => ({})),
-      fetch(CONTENT_URL + "/public/news").then(r => r.json()).then(parseResponse).catch(() => []),
+      fetch(CONTENT_URL + "?action=public_services").then(r => r.json()).then(parseResponse).catch(() => []),
+      fetch(CONTENT_URL + "?action=public_faq").then(r => r.json()).then(parseResponse).catch(() => []),
+      fetch(CONTENT_URL + "?action=public_settings").then(r => r.json()).then(parseResponse).catch(() => ({})),
+      fetch(CONTENT_URL + "?action=public_news").then(r => r.json()).then(parseResponse).catch(() => []),
     ]).then(([s, f, st, n]) => {
       const safeServices = Array.isArray(s) ? s : [];
       const safeFaq = Array.isArray(f) ? f : [];

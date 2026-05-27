@@ -37,7 +37,7 @@ export default function NewsPage() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch(CONTENT_URL + "/public/news/all")
+    fetch(CONTENT_URL + "?action=public_news_all")
       .then(r => r.json())
       .then(d => parseResponse(d))
       .then(d => {

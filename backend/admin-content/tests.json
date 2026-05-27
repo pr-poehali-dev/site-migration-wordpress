@@ -1,10 +1,17 @@
 {
   "tests": [
     {
-      "name": "Health check",
+      "name": "Health check no action",
       "method": "GET",
-      "path": "/",
+      "path": "/?action=",
       "expectedStatus": 401,
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Public services",
+      "method": "GET",
+      "path": "/?action=public_services",
+      "expectedStatus": 200,
       "bodyMatcher": "partial"
     }
   ]

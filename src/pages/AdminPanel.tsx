@@ -186,10 +186,10 @@ export default function AdminPanel() {
   async function loadAll() {
     setLoading(true);
     const [s, f, st, n] = await Promise.all([
-      apiFetch(CONTENT_URL + "/services", { headers: authHeaders() }),
-      apiFetch(CONTENT_URL + "/faq", { headers: authHeaders() }),
-      apiFetch(CONTENT_URL + "/settings", { headers: authHeaders() }),
-      apiFetch(CONTENT_URL + "/news", { headers: authHeaders() }),
+      apiFetch(CONTENT_URL + "?action=services", { headers: authHeaders() }),
+      apiFetch(CONTENT_URL + "?action=faq", { headers: authHeaders() }),
+      apiFetch(CONTENT_URL + "?action=settings", { headers: authHeaders() }),
+      apiFetch(CONTENT_URL + "?action=news", { headers: authHeaders() }),
     ]);
     setServices(Array.isArray(s) ? s : []);
     setFaq(Array.isArray(f) ? f : []);
@@ -212,43 +212,43 @@ export default function AdminPanel() {
 
   async function saveService(s: Service) {
     setSaving(true);
-    if (s.id === 0) await fetch(CONTENT_URL + "/services", { method: "POST", headers: authHeaders(), body: JSON.stringify(s) });
-    else await fetch(CONTENT_URL + "/services/" + s.id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(s) });
+    if (s.id === 0) await fetch(CONTENT_URL + "?action=services_create", { method: "POST", headers: authHeaders(), body: JSON.stringify(s) });
+    else await fetch(CONTENT_URL + "?action=services_update&id=" + s.id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(s) });
     setSaving(false); setEditService(null); flash("Сохранено!"); loadAll();
   }
   async function deleteService(id: number) {
     if (!confirm("Удалить услугу?")) return;
-    await fetch(CONTENT_URL + "/services/" + id, { method: "DELETE", headers: authHeaders() });
+    await fetch(CONTENT_URL + "?action=services_delete&id=" + id, { method: "DELETE", headers: authHeaders() });
     flash("Удалено"); loadAll();
   }
 
   async function saveFaq(f: Faq) {
     setSaving(true);
-    if (f.id === 0) await fetch(CONTENT_URL + "/faq", { method: "POST", headers: authHeaders(), body: JSON.stringify(f) });
-    else await fetch(CONTENT_URL + "/faq/" + f.id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(f) });
+    if (f.id === 0) await fetch(CONTENT_URL + "?action=faq_create", { method: "POST", headers: authHeaders(), body: JSON.stringify(f) });
+    else await fetch(CONTENT_URL + "?action=faq_update&id=" + f.id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(f) });
     setSaving(false); setEditFaq(null); flash("Сохранено!"); loadAll();
   }
   async function deleteFaq(id: number) {
     if (!confirm("Удалить вопрос?")) return;
-    await fetch(CONTENT_URL + "/faq/" + id, { method: "DELETE", headers: authHeaders() });
+    await fetch(CONTENT_URL + "?action=faq_delete&id=" + id, { method: "DELETE", headers: authHeaders() });
     flash("Удалено"); loadAll();
   }
 
   async function saveNews(n: NewsItem) {
     setSaving(true);
-    if (n.id === 0) await fetch(CONTENT_URL + "/news", { method: "POST", headers: authHeaders(), body: JSON.stringify(n) });
-    else await fetch(CONTENT_URL + "/news/" + n.id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(n) });
+    if (n.id === 0) await fetch(CONTENT_URL + "?action=news_create", { method: "POST", headers: authHeaders(), body: JSON.stringify(n) });
+    else await fetch(CONTENT_URL + "?action=news_update&id=" + n.id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(n) });
     setSaving(false); setEditNews(null); flash("Сохранено!"); loadAll();
   }
   async function deleteNews(id: number) {
     if (!confirm("Удалить новость?")) return;
-    await fetch(CONTENT_URL + "/news/" + id, { method: "DELETE", headers: authHeaders() });
+    await fetch(CONTENT_URL + "?action=news_delete&id=" + id, { method: "DELETE", headers: authHeaders() });
     flash("Удалено"); loadAll();
   }
 
   async function saveSettings() {
     setSaving(true);
-    await fetch(CONTENT_URL + "/settings", { method: "PUT", headers: authHeaders(), body: JSON.stringify(editSettings) });
+    await fetch(CONTENT_URL + "?action=settings_update", { method: "PUT", headers: authHeaders(), body: JSON.stringify(editSettings) });
     setSaving(false); flash("Настройки сохранены!"); loadAll();
   }
 
