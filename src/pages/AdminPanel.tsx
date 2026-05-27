@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { parseResponse } from "@/hooks/useSiteData";
 
 const AUTH_URL = "https://functions.poehali.dev/702f1c91-73d4-425c-b71e-b2f5560c31b1";
 const CONTENT_URL = "https://functions.poehali.dev/b305aa3e-2bad-4942-8d73-ddc275d86aa8";
+const UPLOAD_URL = "https://functions.poehali.dev/713a4fbf-8393-467f-b3eb-38a9e1cce887";
 
 type Tab = "services" | "faq" | "news" | "settings";
 
@@ -21,6 +22,135 @@ async function apiFetch(url: string, options?: RequestInit) {
   const res = await fetch(url, options);
   const raw = await res.json();
   return parseResponse(raw);
+}
+
+function NewsModal({ news, saving, onChange, onSave, onClose }: {
+  news: NewsItem;
+  saving: boolean;
+  onChange: (n: NewsItem) => void;
+  onSave: () => void;
+  onClose: () => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
+  async function uploadFile(file: File) {
+    if (!file.type.startsWith("image/")) return;
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target?.result as string;
+      const res = await fetch(UPLOAD_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Auth-Token": localStorage.getItem("admin_token") || "" },
+        body: JSON.stringify({ image: base64, filename: file.name }),
+      });
+      const data = await res.json();
+      const url = typeof data === "string" ? JSON.parse(data).url : data.url;
+      onChange({ ...news, image_url: url });
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFile(file);
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-start justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-xl border border-gray-700 space-y-4 my-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold">{news.id === 0 ? "Новая новость" : "Редактировать новость"}</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-white"><Icon name="X" size={20} /></button>
+        </div>
+
+        {/* Заголовок */}
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Заголовок</label>
+          <input type="text" value={news.title} onChange={e => onChange({ ...news, title: e.target.value })}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+
+        {/* Картинка */}
+        <div>
+          <label className="block text-xs text-gray-400 mb-2">Картинка</label>
+          {news.image_url && (
+            <div className="relative mb-3 group w-fit">
+              <img src={news.image_url} alt="" className="h-32 rounded-xl object-cover" />
+              <button
+                onClick={() => onChange({ ...news, image_url: "" })}
+                className="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Icon name="X" size={12} />
+              </button>
+            </div>
+          )}
+          {/* Drag & drop зона */}
+          <div
+            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${dragOver ? "border-blue-500 bg-blue-500/10" : "border-gray-700 hover:border-gray-500"}`}
+            onClick={() => fileRef.current?.click()}
+            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+          >
+            {uploading ? (
+              <div className="flex flex-col items-center gap-2 text-blue-400">
+                <Icon name="Loader" size={24} className="animate-spin" />
+                <span className="text-sm">Загружаю...</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-gray-500">
+                <Icon name="Upload" size={24} />
+                <span className="text-sm">Перетащите картинку или <span className="text-blue-400 underline">выберите файл</span></span>
+                <span className="text-xs">JPG, PNG, WEBP до 10 МБ</span>
+              </div>
+            )}
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) uploadFile(f); }} />
+
+          {/* Или ссылка вручную */}
+          <div className="mt-2">
+            <input type="text" value={news.image_url} onChange={e => onChange({ ...news, image_url: e.target.value })}
+              placeholder="Или вставьте ссылку на картинку (https://...)"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500 placeholder-gray-600" />
+          </div>
+        </div>
+
+        {/* Текст */}
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Текст новости</label>
+          <textarea rows={8} value={news.content} onChange={e => onChange({ ...news, content: e.target.value })}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 resize-none" />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+            <input type="checkbox" checked={news.is_active} onChange={e => onChange({ ...news, is_active: e.target.checked })} />
+            Опубликована
+          </label>
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Порядок (число)</label>
+            <input type="number" value={news.sort_order} onChange={e => onChange({ ...news, sort_order: +e.target.value })}
+              className="w-20 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+        </div>
+
+        <div className="flex gap-2 pt-2">
+          <button onClick={onSave} disabled={saving || uploading}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
+            {saving ? "Сохраняю..." : "Сохранить"}
+          </button>
+          <button onClick={onClose} className="px-4 py-2.5 rounded-lg bg-gray-800 text-gray-300 hover:text-white text-sm">Отмена</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminPanel() {
@@ -347,48 +477,13 @@ export default function AdminPanel() {
 
       {/* Modal: Edit News */}
       {editNews && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-xl border border-gray-700 space-y-4 my-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{editNews.id === 0 ? "Новая новость" : "Редактировать новость"}</h3>
-              <button onClick={() => setEditNews(null)} className="text-gray-500 hover:text-white"><Icon name="X" size={20} /></button>
-            </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Заголовок</label>
-              <input type="text" value={editNews.title} onChange={e => setEditNews(prev => ({ ...prev!, title: e.target.value }))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Ссылка на картинку (URL)</label>
-              <input type="text" value={editNews.image_url} onChange={e => setEditNews(prev => ({ ...prev!, image_url: e.target.value }))}
-                placeholder="https://..."
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
-              {editNews.image_url && <img src={editNews.image_url} alt="" className="mt-2 h-24 rounded-lg object-cover" />}
-            </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Текст новости</label>
-              <textarea rows={8} value={editNews.content} onChange={e => setEditNews(prev => ({ ...prev!, content: e.target.value }))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 resize-none" />
-            </div>
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
-                <input type="checkbox" checked={editNews.is_active} onChange={e => setEditNews(prev => ({ ...prev!, is_active: e.target.checked }))} />
-                Опубликована
-              </label>
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Порядок сортировки</label>
-                <input type="number" value={editNews.sort_order} onChange={e => setEditNews(prev => ({ ...prev!, sort_order: +e.target.value }))}
-                  className="w-20 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-blue-500" />
-              </div>
-            </div>
-            <div className="flex gap-2 pt-2">
-              <button onClick={() => saveNews(editNews)} disabled={saving} className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
-                {saving ? "Сохраняю..." : "Сохранить"}
-              </button>
-              <button onClick={() => setEditNews(null)} className="px-4 py-2.5 rounded-lg bg-gray-800 text-gray-300 hover:text-white text-sm">Отмена</button>
-            </div>
-          </div>
-        </div>
+        <NewsModal
+          news={editNews}
+          saving={saving}
+          onChange={(n) => setEditNews(n)}
+          onSave={() => saveNews(editNews)}
+          onClose={() => setEditNews(null)}
+        />
       )}
     </div>
   );
