@@ -1,18 +1,20 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
-
-const PHONE = "+7 (977) 977-57-63";
-const EMAIL = "info@avtomexaniki.ru";
+import { useSiteData } from "@/hooks/useSiteData";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { settings } = useSiteData();
+  const phone = settings.phone;
+  const email = settings.email;
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
       <div className="max-w-6xl mx-auto px-4">
         <div className="hidden md:flex items-center justify-between py-2 border-b border-gray-100 text-sm text-gray-500">
-          <span>Работаем 24/7 — выезжаем по всему городу</span>
+          <span>{settings.work_hours} — выезжаем по всему городу</span>
           <div className="flex gap-6">
-            <a href={`mailto:${EMAIL}`} className="hover:text-[#0055b3] transition-colors">{EMAIL}</a>
+            <a href={`mailto:${email}`} className="hover:text-[#0055b3] transition-colors">{email}</a>
           </div>
         </div>
         <div className="flex items-center justify-between h-16">
@@ -36,9 +38,9 @@ function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href={`tel:${PHONE}`} className="hidden md:flex items-center gap-2 font-montserrat font-bold text-[#0055b3] text-lg">
+            <a href={`tel:${phone}`} className="hidden md:flex items-center gap-2 font-montserrat font-bold text-[#0055b3] text-lg">
               <Icon name="Phone" size={18} className="text-[#ff6600]" />
-              {PHONE}
+              {phone}
             </a>
             <button
               className="md:hidden p-2 text-gray-600"
@@ -60,9 +62,9 @@ function Header() {
                   </a>
                 );
               })}
-              <a href={`tel:${PHONE}`} className="flex items-center gap-2 font-bold text-[#0055b3] pt-2">
+              <a href={`tel:${phone}`} className="flex items-center gap-2 font-bold text-[#0055b3] pt-2">
                 <Icon name="Phone" size={16} className="text-[#ff6600]" />
-                {PHONE}
+                {phone}
               </a>
             </nav>
           </div>
@@ -73,6 +75,8 @@ function Header() {
 }
 
 function Hero() {
+  const { settings } = useSiteData();
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-16">
       <div
@@ -85,17 +89,15 @@ function Hero() {
         <div className="max-w-xl">
           <div className="inline-flex items-center gap-2 bg-[#ff6600]/20 border border-[#ff6600]/40 rounded-full px-4 py-1.5 mb-6 animate-fade-up">
             <span className="w-2 h-2 rounded-full bg-[#ff6600]" />
-            <span className="text-[#ff9944] text-sm font-medium">Работаем 24/7 — выезжаем за 30 минут</span>
+            <span className="text-[#ff9944] text-sm font-medium">{settings.work_hours} — выезжаем за 30 минут</span>
           </div>
 
           <h1 className="font-montserrat font-black text-white text-4xl md:text-5xl lg:text-6xl leading-tight mb-5 animate-fade-up delay-100">
-            Профессиональный<br />
-            <span className="text-[#ff6600]">автосервис</span><br />
-            на дороге или у вас дома
+            {settings.hero_title}
           </h1>
 
           <p className="text-gray-300 text-lg mb-8 leading-relaxed animate-fade-up delay-200">
-            Ремонт и обслуживание любых автомобилей. Диагностика, ходовая, двигатель, электрика — мастер приедет к вам или примем в сервисе.
+            {settings.hero_subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-up delay-300">
@@ -107,7 +109,7 @@ function Hero() {
               Записаться на ремонт
             </a>
             <a
-              href={`tel:${PHONE}`}
+              href={`tel:${settings.phone}`}
               className="inline-flex items-center justify-center gap-2 border-2 border-white/40 hover:border-white text-white font-montserrat font-bold px-8 py-4 rounded-lg text-lg transition-all duration-200 hover:bg-white/10"
             >
               <Icon name="Phone" size={20} />

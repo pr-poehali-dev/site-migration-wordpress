@@ -1,21 +1,5 @@
 import Icon from "@/components/ui/icon";
-
-const services = [
-  { icon: "Wrench", title: "Ремонт двигателя", desc: "Капитальный и текущий ремонт, замена масла, ГРМ, диагностика", price: "от 2 000 ₽" },
-  { icon: "Settings", title: "Ходовая часть", desc: "Замена амортизаторов, рулевых тяг, шаровых опор, подшипников", price: "от 1 500 ₽" },
-  { icon: "Zap", title: "Электрика", desc: "Диагностика и ремонт электрооборудования, замена проводки", price: "от 1 000 ₽" },
-  { icon: "Wind", title: "Кондиционер", desc: "Заправка, ремонт, чистка системы кондиционирования", price: "от 1 500 ₽" },
-  { icon: "Gauge", title: "Диагностика", desc: "Компьютерная диагностика всех систем автомобиля", price: "от 500 ₽" },
-  { icon: "Shield", title: "ТО и обслуживание", desc: "Полное техническое обслуживание по регламенту", price: "от 3 000 ₽" },
-  { icon: "Car", title: "Кузовные работы", desc: "Покраска, рихтовка, устранение вмятин без покраски", price: "от 2 500 ₽" },
-  { icon: "Fuel", title: "Топливная система", desc: "Чистка форсунок, ремонт ТНВД, замена топливного насоса", price: "от 2 000 ₽" },
-  { icon: "Truck", title: "Эвакуация", desc: "Эвакуация автомобиля в любую точку города и области, день и ночь", price: "от 1 500 ₽" },
-  { icon: "AlertTriangle", title: "Машина прикрытия", desc: "Выезд автомобиля прикрытия на место ДТП или поломки на дороге", price: "от 800 ₽" },
-  { icon: "Shovel", title: "Откопать автомобиль", desc: "В зимнее время откапываем машину из снега — быстро, приедем в течение часа", price: "от 1 000 ₽" },
-  { icon: "BatteryCharging", title: "Прикурить автомобиль", desc: "Запуск двигателя при севшем аккумуляторе — выезжаем круглосуточно в зимний период", price: "от 500 ₽" },
-  { icon: "Flame", title: "Отогрев автомобиля", desc: "Отогреем замёрзший двигатель, замки и топливную систему — в зимнее время, выезд до 60 минут", price: "от 1 500 ₽" },
-  { icon: "Droplets", title: "Доставка топлива", desc: "Привезём бензин или дизель, если закончилось топливо — выезд по городу и области", price: "по запросу" },
-];
+import { useSiteData } from "@/hooks/useSiteData";
 
 const reasons = [
   { icon: "Clock", title: "Выезд за 30 минут", desc: "Мастер приедет к вам — работаем по всему городу и области" },
@@ -25,6 +9,8 @@ const reasons = [
 ];
 
 function Services() {
+  const { services, loading } = useSiteData();
+
   return (
     <section id="services" className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4">
@@ -34,21 +20,29 @@ function Services() {
           <p className="text-gray-500 text-lg max-w-xl mx-auto">Выполняем весь спектр работ по ремонту и обслуживанию автомобилей</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((s) => (
-            <div
-              key={s.title}
-              className="group bg-[#f4f6fa] hover:bg-[#0055b3] rounded-xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
-            >
-              <div className="w-12 h-12 bg-[#0055b3] group-hover:bg-white/20 rounded-lg flex items-center justify-center mb-4 transition-colors duration-300">
-                <Icon name={s.icon} size={24} className="text-white" fallback="Wrench" />
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-[#f4f6fa] rounded-xl p-6 animate-pulse h-44" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((s) => (
+              <div
+                key={s.id}
+                className="group bg-[#f4f6fa] hover:bg-[#0055b3] rounded-xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+              >
+                <div className="w-12 h-12 bg-[#0055b3] group-hover:bg-white/20 rounded-lg flex items-center justify-center mb-4 transition-colors duration-300">
+                  <Icon name={s.icon} size={24} className="text-white" fallback="Wrench" />
+                </div>
+                <h3 className="font-montserrat font-bold text-[#1a1f2e] group-hover:text-white text-lg mb-2 transition-colors duration-300">{s.title}</h3>
+                <p className="text-gray-500 group-hover:text-blue-100 text-sm mb-4 transition-colors duration-300 leading-relaxed">{s.description}</p>
+                <div className="font-montserrat font-bold text-[#ff6600] group-hover:text-[#ffaa66] transition-colors duration-300">{s.price}</div>
               </div>
-              <h3 className="font-montserrat font-bold text-[#1a1f2e] group-hover:text-white text-lg mb-2 transition-colors duration-300">{s.title}</h3>
-              <p className="text-gray-500 group-hover:text-blue-100 text-sm mb-4 transition-colors duration-300 leading-relaxed">{s.desc}</p>
-              <div className="font-montserrat font-bold text-[#ff6600] group-hover:text-[#ffaa66] transition-colors duration-300">{s.price}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

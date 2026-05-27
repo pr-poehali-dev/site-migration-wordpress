@@ -1,21 +1,11 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
-
-const PHONE = "+7 (977) 977-57-63";
-const EMAIL = "info@avtomexaniki.ru";
-
-const faq = [
-  { q: "Как записаться на ремонт?", a: "Позвоните нам или оставьте заявку на сайте. Мы свяжемся с вами в течение 15 минут для согласования времени." },
-  { q: "Выезжаете ли на место поломки?", a: "Да, наши мастера выезжают на место поломки в черте города и ближайшем пригороде. Стоимость выезда — от 500 ₽." },
-  { q: "Есть ли гарантия на ремонт?", a: "На все виды работ мы предоставляем письменную гарантию. Срок гарантии зависит от вида работ — от 3 месяцев до 1 года." },
-  { q: "Работаете ли с иномарками?", a: "Да, работаем со всеми марками и моделями автомобилей — отечественными и иностранными." },
-  { q: "Сколько времени занимает диагностика?", a: "Компьютерная диагностика занимает от 30 до 60 минут. По итогам вы получите полный отчёт о состоянии автомобиля." },
-  { q: "Работаете ли вы со спецтехникой и грузовыми автомобилями?", a: "Да, работаем со спецтехникой и грузовыми автомобилями любых марок. Наши мастера имеют опыт обслуживания грузовиков, автобусов и спецтехники — экскаваторов, погрузчиков, тягачей." },
-  { q: "Есть ли зимние услуги — откопать и прикурить автомобиль?", a: "Да, в зимнее время мы оказываем услуги по откапыванию автомобиля из снега, прикуриванию севшего аккумулятора, а также отогреву замёрзшего автомобиля. Выезжаем быстро — в течение 30–60 минут. Звоните в любое время суток!" },
-];
+import { useSiteData } from "@/hooks/useSiteData";
 
 function FAQ() {
+  const { faq, loading } = useSiteData();
   const [open, setOpen] = useState<number | null>(0);
+
   return (
     <section id="faq" className="py-20 bg-white">
       <div className="max-w-3xl mx-auto px-4">
@@ -23,30 +13,43 @@ function FAQ() {
           <div className="section-divider mx-auto mb-4" />
           <h2 className="font-montserrat font-black text-[#1a1f2e] text-3xl md:text-4xl mb-3">Частые вопросы</h2>
         </div>
-        <div className="space-y-3">
-          {faq.map((item, i) => (
-            <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
-              <button
-                className="w-full flex items-center justify-between px-6 py-5 text-left font-montserrat font-semibold text-[#1a1f2e] hover:bg-gray-50 transition-colors"
-                onClick={() => setOpen(open === i ? null : i)}
-              >
-                <span>{item.q}</span>
-                <Icon name={open === i ? "ChevronUp" : "ChevronDown"} size={20} className="text-gray-400 flex-shrink-0 ml-4" />
-              </button>
-              {open === i && (
-                <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4 animate-fade-in">
-                  {item.a}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="border border-gray-200 rounded-xl h-16 animate-pulse bg-gray-50" />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {faq.map((item, i) => (
+              <div key={item.id} className="border border-gray-200 rounded-xl overflow-hidden">
+                <button
+                  className="w-full flex items-center justify-between px-6 py-5 text-left font-montserrat font-semibold text-[#1a1f2e] hover:bg-gray-50 transition-colors"
+                  onClick={() => setOpen(open === i ? null : i)}
+                >
+                  <span>{item.question}</span>
+                  <Icon name={open === i ? "ChevronUp" : "ChevronDown"} size={20} className="text-gray-400 flex-shrink-0 ml-4" />
+                </button>
+                {open === i && (
+                  <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4 animate-fade-in">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
 function Contacts() {
+  const { settings } = useSiteData();
+  const phone = settings.phone;
+  const email = settings.email;
+  const workHours = settings.work_hours;
+
   return (
     <section id="contacts" className="py-20 bg-[#0d1b3e]">
       <div className="max-w-6xl mx-auto px-4">
@@ -57,9 +60,9 @@ function Contacts() {
         </div>
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {[
-            { icon: "Phone", title: "Телефон", val: PHONE, sub: "Звонки и WhatsApp", href: `tel:${PHONE}` },
-            { icon: "Mail", title: "Email", val: EMAIL, sub: "Отвечаем в течение часа", href: `mailto:${EMAIL}` },
-            { icon: "Clock", title: "Режим работы", val: "24/7", sub: "Без выходных и праздников", href: undefined },
+            { icon: "Phone", title: "Телефон", val: phone, sub: "Звонки и WhatsApp", href: `tel:${phone}` },
+            { icon: "Mail", title: "Email", val: email, sub: "Отвечаем в течение часа", href: `mailto:${email}` },
+            { icon: "Clock", title: "Режим работы", val: workHours, sub: "Без выходных и праздников", href: undefined },
           ].map((c) => (
             <div key={c.title} className="bg-white/5 border border-white/10 rounded-xl p-7 text-center hover:bg-white/10 transition-colors">
               <div className="w-14 h-14 bg-[#ff6600]/15 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -120,7 +123,7 @@ function Contacts() {
         </div>
         <div className="flex items-center gap-3 mt-4 text-gray-400 text-sm">
           <Icon name="MapPin" size={16} className="text-[#ff6600] flex-shrink-0" />
-          <span>Алексеевский район, Северо-Восточный административный округ, Москва</span>
+          <span>{settings.address}</span>
         </div>
       </div>
     </section>
@@ -166,6 +169,7 @@ function Partners() {
 }
 
 function Footer() {
+  const { settings } = useSiteData();
   return (
     <footer className="bg-[#0a1122] py-8 border-t border-white/5">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-gray-500 text-sm">
@@ -175,7 +179,7 @@ function Footer() {
           </div>
           <span className="font-montserrat font-bold text-white">АвтоМеханики</span>
         </div>
-        <div>© 2024 avtomexaniki.ru — Все права защищены</div>
+        <div>© 2024 {settings.email} — Все права защищены</div>
         <div className="flex gap-4">
           <a href="#" className="hover:text-white transition-colors">Политика конфиденциальности</a>
         </div>
