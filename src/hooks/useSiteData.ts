@@ -38,6 +38,13 @@ const DEFAULT_SETTINGS: SiteSettings = {
 
 let cache: { services: Service[]; faq: FaqItem[]; settings: SiteSettings } | null = null;
 
+function parseResponse(data: unknown): unknown {
+  if (typeof data === "string") {
+    try { return JSON.parse(data); } catch { return data; }
+  }
+  return data;
+}
+
 export function useSiteData() {
   const [services, setServices] = useState<Service[]>([]);
   const [faq, setFaq] = useState<FaqItem[]>([]);
@@ -53,14 +60,17 @@ export function useSiteData() {
       return;
     }
     Promise.all([
-      fetch(CONTENT_URL + "/public/services").then(r => r.json()).catch(() => []),
-      fetch(CONTENT_URL + "/public/faq").then(r => r.json()).catch(() => []),
-      fetch(CONTENT_URL + "/public/settings").then(r => r.json()).catch(() => ({})),
+      fetch(CONTENT_URL + "/public/services").then(r => r.json()).then(parseResponse).catch(() => []),
+      fetch(CONTENT_URL + "/public/faq").then(r => r.json()).then(parseResponse).catch(() => []),
+      fetch(CONTENT_URL + "/public/settings").then(r => r.json()).then(parseResponse).catch(() => ({})),
     ]).then(([s, f, st]) => {
-      const mergedSettings = { ...DEFAULT_SETTINGS, ...st };
-      cache = { services: s, faq: f, settings: mergedSettings };
-      setServices(s);
-      setFaq(f);
+      const safeServices = Array.isArray(s) ? s : [];
+      const safeFaq = Array.isArray(f) ? f : [];
+      const safeSettings = (st && typeof st === "object" && !Array.isArray(st)) ? st : {};
+      const mergedSettings = { ...DEFAULT_SETTINGS, ...safeSettings };
+      cache = { services: safeServices, faq: safeFaq, settings: mergedSettings };
+      setServices(safeServices);
+      setFaq(safeFaq);
       setSettings(mergedSettings);
       setLoading(false);
     });
